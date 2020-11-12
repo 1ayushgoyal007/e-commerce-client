@@ -77,7 +77,7 @@ const PlaceOrderScreen = ({ history }) => {
                                 return <ListGroup.Item key={index} >
                                     <Row>
                                         <Col md={1}>
-                                            { item.image ?<Image src={`\\${item.image.slice(16,)}`} alt={item.name} fluid  />: null  }
+                                            { item.image ?<Image src={item.image} alt={item.name} fluid  />: null  }
                                             
                                         </Col>
                                         <Col>

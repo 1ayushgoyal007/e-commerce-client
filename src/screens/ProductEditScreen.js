@@ -1,6 +1,5 @@
 import React,{useState, useEffect} from 'react';
 import {Link} from 'react-router-dom';
-import axios from 'axios';
 import {Button , Form} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Message from '../components/Message';
@@ -8,6 +7,7 @@ import Loader from '../components/Loader';
 import { PRODUCT_UPDATE_RESET } from '../constants/productConstants';
 import FormContainer from '../components/FormContainer';
 import {listProductDetails, updateProduct} from '../actions/productActions';
+import firebase from '../firebase';
 
 
 const ProductEditScreen = ({ match, history }) => {
@@ -57,28 +57,37 @@ const ProductEditScreen = ({ match, history }) => {
 
     const uploadFileHandler = async (e) => {
         const file = e.target.files[0];
-        const formData = new FormData();
-        console.log('formdata', formData);
         console.log('file', file);
-        formData.append('image', file);
         setUploading(true);
 
-        try{
-            const config = {
-                headers:{
-                    'Content-Type':'multipart/form-data'
-                }
-            }
 
-            const { data } = await axios.post('https://e-commerce1-server.herokuapp.com/api/upload', formData, config);
-            setImage(data);
-            console.log('now it should work', data);
-            setUploading(false);
-        }catch(err){
-            console.log('error occured while uploading', err);
-            setUploading(false);
-        } 
-    }
+            // const { data } = await axios.post('https://e-commerce1-server.herokuapp.com/api/upload', formData, config);
+
+
+            // setImage(data);
+            // console.log('now it should work', data);
+            const image = `image-${Date.now()}`
+            var uploadTask = firebase.storage().ref((`/images/${image}`)).put(file);
+            uploadTask.on('state_changed', (snapshot)=>{
+                console.log('live status of image upload', snapshot);
+            },(err)=>{
+                console.log('error while uploading image',err);
+            },()=>{
+                firebase.storage().ref(`/images/${image}`).getDownloadURL().then((imageUrl)=>{
+                    console.log('this thing is only worth', imageUrl);
+                    setImage(imageUrl);
+                    setUploading(false);
+                }).catch((err)=>{
+                    console.log('nothing to see',err);
+                    setUploading(false);
+
+                })
+            })
+            
+
+            // setUploading(false);
+        }
+    
 
     return <div>
         <Link to='/admin/productlist' className="btn btn-light my-3" >
