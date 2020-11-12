@@ -18,7 +18,7 @@ import ProductEditScreen from './screens/ProductEditScreen';
 import OrderListScreen from './screens/OrderListScreen';
 import VerifyScreen from './screens/VerifyScreen';
 
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {  Route, HashRouter as Router } from 'react-router-dom';
 
 
 
